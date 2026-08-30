@@ -3,7 +3,13 @@ import asyncio
 import requests
 import streamlit as st
 import edge_tts
+
+# Import MoviePy dengan kompatibilitas MoviePy v1.0.3 & v2.0+
 from moviepy.editor import *
+try:
+    import moviepy.video.fx.all as vfx
+except ImportError:
+    vfx = None
 
 # Directory Setup
 OUTPUT_DIR = "poorshort_v2_output"
@@ -62,6 +68,16 @@ def create_pop_sound(duration=0.15):
     audio_array = np.vstack((wave, wave)).T
     return AudioArrayClip(audio_array, fps=sample_rate)
 
+def resize_clip(clip, size):
+    """Fungsi helper aman untuk menangani .resize() maupun .resized()"""
+    if hasattr(clip, "resize"):
+        return clip.resize(size)
+    elif hasattr(clip, "resized"):
+        return clip.resized(size)
+    elif vfx and hasattr(vfx, "resize"):
+        return vfx.resize(clip, size)
+    return clip
+
 def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_key, font_color, duration_sec, api_key=None):
     width, height = ASPECT_RATIOS[aspect_key]
     audio_voice_path = os.path.join(OUTPUT_DIR, "voice.mp3")
@@ -75,7 +91,8 @@ def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_ke
     bg_video_path = fetch_pexels_video(search_keyword, orientation=orient, api_key=api_key)
     
     if bg_video_path and os.path.exists(bg_video_path):
-        bg_clip = VideoFileClip(bg_video_path).resize((width, height)).subclip(0, final_duration).without_audio()
+        bg_clip_raw = VideoFileClip(bg_video_path)
+        bg_clip = resize_clip(bg_clip_raw, (width, height)).subclip(0, final_duration).without_audio()
     else:
         bg_clip = ColorClip(size=(width, height), color=(15, 23, 42), duration=final_duration)
         
