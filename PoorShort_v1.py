@@ -79,12 +79,13 @@ def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_ke
     else:
         bg_clip = ColorClip(size=(width, height), color=(15, 23, 42), duration=final_duration)
         
-    base_fontsize = int(width * 0.06)
+    base_fontsize = int(width * 0.05)
+    
+    # TextClip tanpa mengunci nama font spesifik agar tidak crash di Linux Server
     txt_clip = TextClip(
         text=script_text,
         font_size=base_fontsize,
         color=font_color,
-        font='DejaVuSans-Bold',
         method='caption',
         size=(int(width * 0.85), None)
     ).with_position(('center', 'center')).with_duration(final_duration)
@@ -152,4 +153,3 @@ if generate_btn:
                     st.text_area("Salin Hashtag Ini:", value=generated_tags, height=120)
             except Exception as e:
                 st.error(f"Gagal merender: {e}")
-
