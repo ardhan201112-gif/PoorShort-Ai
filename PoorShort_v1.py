@@ -75,7 +75,7 @@ def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_ke
     bg_video_path = fetch_pexels_video(search_keyword, orientation=orient, api_key=api_key)
     
     if bg_video_path and os.path.exists(bg_video_path):
-        bg_clip = VideoFileClip(bg_video_path).resized((width, height)).subclip(0, final_duration).without_audio()
+        bg_clip = VideoFileClip(bg_video_path).resized((width, height)).subclipped(0, final_duration).without_audio()
     else:
         bg_clip = ColorClip(size=(width, height), color=(15, 23, 42), duration=final_duration)
         
