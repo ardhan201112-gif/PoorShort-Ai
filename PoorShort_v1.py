@@ -3,10 +3,7 @@ import asyncio
 import requests
 import streamlit as st
 import edge_tts
-from moviepy.editor import (
-    TextClip, CompositeVideoClip, AudioFileClip, 
-    VideoFileClip, CompositeAudioClip, ColorClip
-)
+from moviepy import *
 
 # Directory Setup
 OUTPUT_DIR = "poorshort_v2_output"
