@@ -62,16 +62,6 @@ def create_pop_sound(duration=0.15):
     audio_array = np.vstack((wave, wave)).T
     return AudioArrayClip(audio_array, fps=sample_rate)
 
-def resize_clip(clip, size):
-    """Fungsi helper aman untuk menangani .resize() maupun .resized()"""
-    if hasattr(clip, "resize"):
-        return clip.resize(size)
-    elif hasattr(clip, "resized"):
-        return clip.resized(size)
-    elif vfx and hasattr(vfx, "resize"):
-        return vfx.resize(clip, size)
-    return clip
-
 def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_key, font_color, duration_sec, api_key=None):
     width, height = ASPECT_RATIOS[aspect_key]
     audio_voice_path = os.path.join(OUTPUT_DIR, "voice.mp3")
@@ -85,25 +75,24 @@ def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_ke
     bg_video_path = fetch_pexels_video(search_keyword, orientation=orient, api_key=api_key)
     
     if bg_video_path and os.path.exists(bg_video_path):
-        bg_clip_raw = VideoFileClip(bg_video_path)
-        bg_clip = resize_clip(bg_clip_raw, (width, height)).subclip(0, final_duration).without_audio()
+        bg_clip = VideoFileClip(bg_video_path).resized((width, height)).subclip(0, final_duration).without_audio()
     else:
         bg_clip = ColorClip(size=(width, height), color=(15, 23, 42), duration=final_duration)
         
     base_fontsize = int(width * 0.06)
     txt_clip = TextClip(
-        script_text,
-        fontsize=base_fontsize,
+        text=script_text,
+        font_size=base_fontsize,
         color=font_color,
-        font='Arial-Bold',
+        font='Arial',
         method='caption',
         size=(int(width * 0.85), None)
-    ).set_position(('center', 'center')).set_duration(final_duration)
+    ).with_position(('center', 'center')).with_duration(final_duration)
     
-    pop_sfx = create_pop_sound().set_start(0.1)
-    composite_audio = CompositeAudioClip([voice_clip, pop_sfx]).set_duration(final_duration)
+    pop_sfx = create_pop_sound().with_start(0.1)
+    composite_audio = CompositeAudioClip([voice_clip, pop_sfx]).with_duration(final_duration)
     
-    final_video = CompositeVideoClip([bg_clip, txt_clip]).set_audio(composite_audio)
+    final_video = CompositeVideoClip([bg_clip, txt_clip]).with_audio(composite_audio)
     final_video.write_videofile(output_final_path, fps=30, codec="libx264", audio_codec="aac", preset="fast")
     
     bg_clip.close()
@@ -162,4 +151,4 @@ if generate_btn:
                 with r_col2:
                     st.text_area("Salin Hashtag Ini:", value=generated_tags, height=120)
             except Exception as e:
-                st.error(f"Gagal merender: {e
+                st.error(f"Gagal merender: {e}")
