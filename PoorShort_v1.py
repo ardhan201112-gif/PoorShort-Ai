@@ -84,7 +84,7 @@ def build_poorshort_auto_video(script_text, search_keyword, aspect_key, voice_ke
         text=script_text,
         font_size=base_fontsize,
         color=font_color,
-        font='Arial',
+        font='DejaVuSans-Bold',
         method='caption',
         size=(int(width * 0.85), None)
     ).with_position(('center', 'center')).with_duration(final_duration)
@@ -152,3 +152,4 @@ if generate_btn:
                     st.text_area("Salin Hashtag Ini:", value=generated_tags, height=120)
             except Exception as e:
                 st.error(f"Gagal merender: {e}")
+
