@@ -3,7 +3,7 @@ import asyncio
 import requests
 import streamlit as st
 import edge_tts
-from moviepy import *
+from moviepy.editor import *
 
 # Directory Setup
 OUTPUT_DIR = "poorshort_v2_output"
