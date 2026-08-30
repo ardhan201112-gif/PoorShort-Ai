@@ -3,13 +3,7 @@ import asyncio
 import requests
 import streamlit as st
 import edge_tts
-
-# Import MoviePy dengan kompatibilitas MoviePy v1.0.3 & v2.0+
-from moviepy.editor import *
-try:
-    import moviepy.video.fx.all as vfx
-except ImportError:
-    vfx = None
+from moviepy import *
 
 # Directory Setup
 OUTPUT_DIR = "poorshort_v2_output"
@@ -168,4 +162,4 @@ if generate_btn:
                 with r_col2:
                     st.text_area("Salin Hashtag Ini:", value=generated_tags, height=120)
             except Exception as e:
-                st.error(f"Gagal merender: {e}")
+                st.error(f"Gagal merender: {e
